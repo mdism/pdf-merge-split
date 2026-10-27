@@ -1,9 +1,9 @@
 /* PDF Merge & Split: copies pages between documents with pdf-lib, all in memory. */
 (function () {
-  const { dropZone, formatBytes, download, baseName } = window.Tool;
+  const { dropZone, formatBytes, download, baseName, vetFiles, say } = window.Tool;
   const { PDFDocument } = window.PDFLib;
   const $ = s => document.querySelector(s);
-  const isPdf = f => f.type === 'application/pdf' || /\.pdf$/i.test(f.name);
+  const LIMITS = { kinds: ['pdf'], maxMB: 150 };
 
   /* ---------- tabs ---------- */
   const tabs = { merge: [$('#tabMerge'), $('#paneMerge')], split: [$('#tabSplit'), $('#paneSplit')] };
@@ -21,15 +21,16 @@
     }
   }
 
-  function showErr(el, msg) { el.textContent = msg; el.hidden = !msg; }
+  const showErr = say;
 
   /* ---------- merge ---------- */
   const mergeList = $('#mergeList'), mergeCard = $('#mergeCard'), mergeErr = $('#mergeErr');
   let mergeFiles = []; // { file, pages }
 
   dropZone($('#dropMerge'), async files => {
-    showErr(mergeErr, '');
-    for (const file of files.filter(isPdf)) {
+    const { ok, problems } = await vetFiles(files, { ...LIMITS, maxCount: 50 - mergeFiles.length });
+    showErr(mergeErr, problems.join(' '));
+    for (const file of ok) {
       const entry = { file, pages: null };
       mergeFiles.push(entry);
       renderMerge();
@@ -41,19 +42,21 @@
 
   function renderMerge() {
     mergeCard.hidden = !mergeFiles.length;
-    mergeList.innerHTML = '';
+    mergeList.textContent = '';
     mergeFiles.forEach((entry, i) => {
       const li = document.createElement('li');
       li.className = 'item';
-      const pages = entry.error ? `<span class="err">${entry.error}</span>` : entry.pages == null ? 'Reading…' : `${entry.pages} page${entry.pages > 1 ? 's' : ''}`;
+      const pages = entry.error ? 'Cannot be used, see below' : entry.pages == null ? 'Reading…' : `${entry.pages} page${entry.pages > 1 ? 's' : ''}`;
       li.innerHTML = `<div class="thumb" style="display:grid;place-items:center;font-weight:800;color:var(--orange)">${i + 1}</div>
-        <div class="info"><div class="name"></div><div class="meta">${formatBytes(entry.file.size)} · ${pages}</div></div>
+        <div class="info"><div class="name"></div><div class="meta"></div></div>
         <div class="actions">
           <button class="btn small" type="button" data-act="up" aria-label="Move up" ${i === 0 ? 'disabled' : ''}>↑</button>
           <button class="btn small" type="button" data-act="down" aria-label="Move down" ${i === mergeFiles.length - 1 ? 'disabled' : ''}>↓</button>
           <button class="btn small" type="button" data-act="rm" aria-label="Remove">✕</button>
         </div>`;
       li.querySelector('.name').textContent = entry.file.name;
+      li.querySelector('.meta').textContent = `${formatBytes(entry.file.size)} · ${pages}`;
+      if (entry.error) li.querySelector('.meta').classList.add('err');
       li.addEventListener('click', e => {
         const act = e.target.closest('button')?.dataset.act;
         if (!act) return;
@@ -67,6 +70,8 @@
     const total = mergeFiles.reduce((s, f) => s + (f.pages || 0), 0);
     $('#mergeInfo').textContent = `${mergeFiles.length} file${mergeFiles.length === 1 ? '' : 's'} · ${total} pages in total`;
     $('#mergeBtn').disabled = mergeFiles.length < 2 || mergeFiles.some(f => f.pages == null);
+    const errors = mergeFiles.filter(f => f.error).map(f => f.error);
+    if (errors.length) showErr(mergeErr, errors.join(' ') + ' Remove it to continue.');
   }
 
   $('#mergeClear').addEventListener('click', () => { mergeFiles = []; showErr(mergeErr, ''); renderMerge(); });
@@ -92,9 +97,11 @@
   let splitFile = null, splitDoc = null, mode = 'range';
 
   dropZone(dropSplit, async files => {
-    const file = files.find(isPdf);
+    const { ok, problems } = await vetFiles(files.slice(0, 1), { ...LIMITS, maxCount: 1 });
+    const file = ok[0];
+    splitCard.hidden = false;
+    showErr(splitErr, problems.join(' '));
     if (!file) return;
-    showErr(splitErr, '');
     try {
       splitDoc = await openPdf(file);
       splitFile = file;
