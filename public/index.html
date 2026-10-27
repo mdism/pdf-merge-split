@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Merge &amp; Split — Ismail Shaikh</title>
+<meta name="description" content="Free PDF merge and split tool. Combine PDFs or pull out pages in your browser. Nothing is uploaded.">
+<link rel="canonical" href="https://pdf.shaikhismail.com/">
+<meta property="og:title" content="PDF Merge &amp; Split — free, private, in your browser">
+<meta property="og:description" content="Combine PDFs into one, or pull out the pages you need.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23155E3B'/><text x='50' y='68' font-size='58' text-anchor='middle' fill='%23F5821F' font-family='monospace' font-weight='bold'>i</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tool.css?v=1.0.0">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="https://shaikhismail.com/"><span class="logo">i</span>PDF Merge &amp; Split <small>by Ismail</small></a>
+    <nav>
+      <a class="hide-sm" href="https://shaikhismail.com/tools/">All tools</a>
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="Toggle theme">☾</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap stack">
+    <div>
+      <div class="prompt" aria-hidden="true"><span class="u">guest</span>@<span class="d">pdf</span>:~$ merge a.pdf b.pdf</div>
+      <h1>PDF Merge &amp; Split</h1>
+      <p class="lead">Combine several PDFs into one, or pull out just the pages you need. It all runs in your browser, so your documents stay on your device.</p>
+      <span class="privacy">● No upload · works offline once loaded</span>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tabMerge" aria-selected="true" aria-controls="paneMerge" type="button">Merge</button>
+      <button role="tab" id="tabSplit" aria-selected="false" aria-controls="paneSplit" type="button">Split / extract</button>
+    </div>
+
+    <!-- MERGE -->
+    <section id="paneMerge" role="tabpanel" aria-labelledby="tabMerge" class="stack">
+      <label class="drop" id="dropMerge">
+        <input type="file" accept="application/pdf,.pdf" multiple>
+        <strong>Drop PDFs here or tap to choose</strong>
+        <span class="muted">Add two or more. Reorder them before merging.</span>
+      </label>
+      <div class="card" id="mergeCard" hidden>
+        <ul class="list" id="mergeList"></ul>
+        <div class="row" style="margin-top:12px;align-items:center">
+          <div class="muted" id="mergeInfo" style="font-size:12px"></div>
+          <div class="actions" style="justify-content:flex-end;flex:0 0 auto">
+            <button class="btn" id="mergeClear" type="button">Clear</button>
+            <button class="btn primary" id="mergeBtn" type="button">Merge &amp; download</button>
+          </div>
+        </div>
+        <p class="err" id="mergeErr" hidden></p>
+      </div>
+    </section>
+
+    <!-- SPLIT -->
+    <section id="paneSplit" role="tabpanel" aria-labelledby="tabSplit" class="stack" hidden>
+      <label class="drop" id="dropSplit">
+        <input type="file" accept="application/pdf,.pdf">
+        <strong>Drop one PDF here or tap to choose</strong>
+        <span class="muted">Then choose the pages to keep.</span>
+      </label>
+      <div class="card stack" id="splitCard" hidden>
+        <div><div class="name" id="splitName" style="font-weight:700"></div><div class="muted" id="splitPages" style="font-size:12px"></div></div>
+        <div class="seg" role="group" aria-label="Split mode">
+          <button type="button" data-mode="range" aria-pressed="true">Extract pages</button>
+          <button type="button" data-mode="each" aria-pressed="false">Every page separately</button>
+          <button type="button" data-mode="chunks" aria-pressed="false">Every N pages</button>
+        </div>
+        <div id="modeRange">
+          <label class="f" for="range">Pages to extract</label>
+          <input id="range" type="text" placeholder="e.g. 1-3, 5, 8-10" autocomplete="off">
+          <div class="muted" style="font-size:12px">Commas between parts, dashes for ranges. Pages are saved in the order you type.</div>
+        </div>
+        <div id="modeChunks" hidden>
+          <label class="f" for="chunk">Pages per file</label>
+          <input id="chunk" type="number" min="1" value="2" inputmode="numeric">
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="splitBtn" type="button">Split &amp; download</button>
+          <button class="btn" id="splitClear" type="button">Choose another PDF</button>
+        </div>
+        <p class="err" id="splitErr" hidden></p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>&copy; <span id="yr">2026</span> <a href="https://shaikhismail.com/">Mohammed Ismail Shaikh</a> · free and open source</span>
+    <span><a href="https://shaikhismail.com/tools/">More free tools</a></span>
+  </div>
+</footer>
+
+<script src="assets/js/common.js?v=1.0.0"></script>
+<script src="assets/vendor/pdf-lib.min.js"></script>
+<script src="assets/vendor/fflate.min.js"></script>
+<script src="assets/js/app.js?v=1.0.0"></script>
+</body>
+</html>
