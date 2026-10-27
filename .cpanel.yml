@@ -1,9 +1,9 @@
 ---
-# MilesWeb (cPanel) deployment for pdf.shaikhismail.com
-# Publishes ONLY the public/ folder. README, LICENSE and .git stay private.
-# DEPLOYPATH must match the subdomain's Document Root in cPanel → Domains.
+# MilesWeb (cPanel) deployment for https://tools.shaikhismail.com/pdf-merge-split/
+# Publishes ONLY the public/ folder into its own folder of the tools subdomain.
+# HTTPS, security headers, bot blocking and the Turnstile check (api/verify.php) come from the tools-hub repo.
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/qyotupjl/pdf.shaikhismail.com/
+    - export DEPLOYPATH=/home/qyotupjl/tools.shaikhismail.com/pdf-merge-split/
     - /bin/mkdir -p $DEPLOYPATH
     - /bin/cp -R public/. $DEPLOYPATH

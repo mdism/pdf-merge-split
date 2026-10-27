@@ -1,6 +1,6 @@
 # Privacy policy: PDF Merge & Split
 
-Live page: https://pdf.shaikhismail.com/privacy.html
+Live page: https://tools.shaikhismail.com/pdf-merge-split/privacy.html
 
 ## The short version
 

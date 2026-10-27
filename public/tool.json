@@ -1,0 +1,7 @@
+{
+  "name": "PDF Merge & Split",
+  "icon": "Pd",
+  "desc": "Combine PDFs into one, or pull out the pages you need.",
+  "status": "live",
+  "order": 20
+}
